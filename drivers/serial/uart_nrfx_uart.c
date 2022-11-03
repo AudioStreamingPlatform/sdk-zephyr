@@ -989,10 +989,12 @@ static int uart_nrfx_init(const struct device *dev)
 
 	nrf_uart_disable(uart0_addr);
 
+#ifndef NRF_UART_NO_TX_IDLE_DRIVE
 	/* Setting default height state of the TX PIN to avoid glitches
 	 * on the line during peripheral activation/deactivation.
 	 */
 	nrf_gpio_pin_write(TX_PIN, 1);
+#endif
 	nrf_gpio_cfg_output(TX_PIN);
 
 	if (RX_PIN_USED) {
@@ -1109,7 +1111,9 @@ static void uart_nrfx_pins_enable(const struct device *dev, bool enable)
 	}
 
 	if (enable) {
+#ifndef NRF_UART_NO_TX_IDLE_DRIVE
 		nrf_gpio_pin_write(TX_PIN, 1);
+#endif
 		nrf_gpio_cfg_output(TX_PIN);
 		if (RX_PIN_USED) {
 			nrf_gpio_cfg_input(RX_PIN,
